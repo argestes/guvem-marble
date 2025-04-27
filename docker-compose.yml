@@ -1,38 +1,17 @@
-services:
-  db:
-    image: mariadb:10.6
-    volumes:
-      - db_data:/var/lib/mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: wordpress
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
-      MYSQL_PASSWORD: wordpress
-    networks:
-      - wordpress
+version: '3'
 
+services:
   wordpress:
-    depends_on:
-      - db
     image: wordpress:latest
     ports:
-      - "8000:80"
+      - "${PORT:-8000}:80"
     restart: always
     volumes:
       - ./wp-content:/var/www/html/wp-content
     environment:
-      WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
-      WORDPRESS_DB_NAME: wordpress
-      WORDPRESS_TABLE_PREFIX: wp_
-      WORDPRESS_DEBUG: "false"
-    networks:
-      - wordpress
-
-networks:
-  wordpress:
-
-volumes:
-  db_data:
+      WORDPRESS_DB_HOST: ${DB_HOST:-db}
+      WORDPRESS_DB_USER: ${DB_USER:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
+      WORDPRESS_DB_NAME: ${DB_NAME:-wordpress}
+      WORDPRESS_TABLE_PREFIX: ${TABLE_PREFIX:-wp_}
+      WORDPRESS_DEBUG: ${DEBUG:-false}
